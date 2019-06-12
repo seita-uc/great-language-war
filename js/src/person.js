@@ -39,7 +39,7 @@ export class Person {
         if (p5.keyIsPressed || (currentTime - this.bumpTime) < 500) {
             this.currentState = this.speak;
         } else if(this.px != p5.mouseX || this.py != p5.mouseY) {
-            if((this.currentTime/300%2) == 0) {
+            if(Math.floor(currentTime/300%2) == 0) {
                 this.currentState = this.walk;
             }
         }
@@ -63,14 +63,9 @@ export class Person {
             const speaker = p5.people[i];
             if(this.bumped(speaker) && this.lang !== speaker.lang) {
                 if(!this.compareRanksOfLanguages(this.lang, speaker.lang)) {
-                    //const propotion1 = p5.langPropotionList[this.lang];
-                    //p5.langPropotionList[lang] = propotion1-1;
-
-                    //const propotion2 = langPropotionList[speaker.lang];
-                    //langPropotionList[speaker.lang] = propotion2+1;
-                    //this.pc = speaker.pc;
-                    //this.lang = speaker.lang;
                     this.updatePropotionList(speaker.lang);
+                    this.pc = speaker.pc;
+                    this.lang = speaker.lang;
                 } else {
                     const propotion1 = p5.langPropotionList[this.lang];
                     p5.langPropotionList[this.lang] = propotion1+1;
@@ -93,7 +88,7 @@ export class Person {
         const currentTime = Date.now();
         if((currentTime - this.bumpTime) < 800) {
             this.currentState = this.speak;
-        } else if((currentTime/this.strand%2) == 0) {
+        } else if(Math.floor(currentTime/this.strand%2) == 0) {
             this.currentState = this.walk;
         } else if (p5.random(100) > 99) {
             this.standTime = currentTime;

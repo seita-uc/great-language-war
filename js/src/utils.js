@@ -20,16 +20,26 @@ export const langPopulationList = {
 export function pieChart(p5, diameter) {
   let lastAngle = 0;
   for(const lang in p5.langPropotionList) {
-      p5.fill(p5.langColorList.get(lang));
+      p5.fill(p5.langColorList[lang]);
       const propotion = p5.langPropotionList[lang];
       const fullDeg = new BigNumber(360);
       const bgProp = new BigNumber(propotion);
       const bgTotal = new BigNumber(p5.totalSpeakersPropotion);
       const angle = fullDeg
           .multipliedBy(bgProp)
-          .dividedBy(bgTotal);
+          .dividedBy(bgTotal)
+          .toNumber();
+      console.log(lang, angle);
       p5.noStroke();
-      p5.arc(p5.windowWidth/2, p5.windowHeight/2, diameter, diameter, lastAngle, lastAngle+p5.radians(angle));
+      p5.arc(
+          p5.windowWidth/2,
+          p5.windowHeight/2,
+          diameter,
+          diameter,
+          lastAngle,
+          lastAngle + p5.radians(angle)
+      );
+
       p5.push();
       p5.translate(p5.windowWidth/2, p5.windowHeight/2);
       const rad = lastAngle + p5.radians(angle);
@@ -41,6 +51,7 @@ export function pieChart(p5, diameter) {
           p5.text(lang, 0, 0);
       }
       p5.pop();
+
       lastAngle += p5.radians(angle);
   }
 }
@@ -59,7 +70,7 @@ export function initialize(p5) {
     p5.maxPeople = 10;
     p5.peopleSortList = new Array();
     p5.people = new Array();
-    p5.personSize = 80;
+    p5.personSize = 100;
     p5.langPropotionList = new Object();
     p5.langColorList = new Object();
 
@@ -79,19 +90,23 @@ export function initialize(p5) {
         const speakers = new BigNumber(langPopulationList[lang]);
         const total = new BigNumber(p5.totalLangSpeakers);
         const maxNum = new BigNumber(p5.maxPeople);
-        const propotion = speakers
+        //const propotion = speakers
+            //.dividedBy(total)
+            //.multipliedBy(new BigNumber(100))
+            //.toNumber();
+        const speakersNum = speakers
             .dividedBy(total)
             .multipliedBy(maxNum)
             .toNumber();
-        p5.langPropotionList[lang] = propotion;
-        p5.totalSpeakersPropotion += propotion;
+        p5.langPropotionList[lang] = speakersNum;
+        p5.totalSpeakersPropotion += speakersNum;
 
         const langColor = p5.color(p5.random(255), p5.random(255), p5.random(255));
         if(lang == p5.person.lang) {
             langColor = p5.color(255, 255, 255);
         }
         p5.langColorList[lang] = langColor;
-        for(let i = 0; i < propotion; i++) {
+        for(let i = 0; i < speakersNum; i++) {
             const langSpeaker = new Person(p5, false, lang);
             p5.people.push(langSpeaker);
         }

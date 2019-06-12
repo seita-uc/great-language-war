@@ -10,16 +10,19 @@ let canvasHeight;
 let canvas;
 const sketch = function(p5) {
     p5.setup = async function() {
+        p5.frameRate(30);
         const body = document.body;
         canvas = craeateCanvasOfParentSize(p5, body);
         canvasWidth = body.clientWidth;
         canvasHeight = body.clientHeight;
+        p5.windowWidth = canvasWidth;
+        p5.windowHeight = canvasHeight;
         initialize(p5);
     }
 
     p5.draw = async function() {
         p5.background(255);
-        pieChart(canvasHeight-50);
+        pieChart(p5, canvasHeight-50);
         p5.people.sort(function(a, b) {
             return a.ey - b.ey;
         });
@@ -33,6 +36,8 @@ const sketch = function(p5) {
         const body = document.body;
         canvasWidth = body.clientWidth;
         canvasHeight = body.clientHeight;
+        p5.windowWidth = canvasWidth;
+        p5.windowHeight = canvasHeight;
         p5.resizeCanvas(canvasWidth, canvasHeight);
     }
 
