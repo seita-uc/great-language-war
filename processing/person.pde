@@ -3,8 +3,7 @@ class Person implements Comparable<Person> {
     public float px, py, ex, ey, exspeed, eyspeed;
     public int strand;
     public color pc;
-    public long bumpTime;
-    public Boolean isShot;
+    public long bumpTime, standTime;
     public String lang;
 
     public Person(Boolean isPlayer, String language) {
@@ -26,11 +25,16 @@ class Person implements Comparable<Person> {
     }
 
     public void initialize() {
+        exspeed = random(0.5, 4);
+        eyspeed = random(0.5, 4);
         ex = random(0, width);
         ey = random(0, height);
-        exspeed = random(1, 5);
-        eyspeed = random(1, 5);
-        isShot = false;
+        if(random(100) > 50) {
+            exspeed = -exspeed;
+        }
+        if(random(100) > 50) {
+            eyspeed = -eyspeed;
+        }
         strand = int(random(200, 400));
         pc = langColorList.get(lang);
     }
@@ -84,61 +88,79 @@ class Person implements Comparable<Person> {
     }
 
     public void move() {
-        if(isShot) {
-            /*explode();*/
-        } else {
-            ex -= exspeed;
-            ey -= eyspeed;
-            currentState = stand;
-            Date d = new Date();
-            long currentTime = d.getTime();
-            if((currentTime - bumpTime) < 800) {
-                currentState = speak;
-            } else if((currentTime/strand%2) == 0) {
-                currentState = walk;
-            }
+        currentState = stand;
+        ex -= exspeed;
+        ey -= eyspeed;
+        Date d = new Date();
+        long currentTime = d.getTime();
+        if((currentTime - bumpTime) < 800) {
+            currentState = speak;
+        } else if((currentTime/strand%2) == 0) {
+            currentState = walk;
+        } else if (random(100) > 99) {
+            standTime = currentTime;
+        }
+            
+        if ((currentTime - standTime) < 500) {
+            ex += exspeed;
+            ey += eyspeed;
+        }
 
-            noTint();
-            tint(pc);
-            image(currentState, ex, ey, personSize, personSize);
-            if(ex < -personSize) {
-                ex = width+personSize;
-            }
-            if(ey < -personSize) {
-                ey = height+personSize;
-            }
+        noTint();
+        tint(pc);
+        image(currentState, ex, ey, personSize, personSize);
+        if(ex < -personSize) {
+            ex = width+personSize;
+        } else if(ex > width) {
+            ex = -personSize;
+        }
+        if(ey < -personSize) {
+            ey = height+personSize;
+        } else if(ey > height) {
+            ey = -personSize;
+        }
 
-            if((currentTime - startTime) < 1000) {
-                return;
-            }
+        if((currentTime - startTime) < 3000) {
+            return;
+        }
 
-            for(Iterator it = people.iterator(); it.hasNext();) {
-                Person speaker = (Person)it.next();
-                if(bumped(speaker) && lang != speaker.lang) {
-                    if(!compareRanksOfLanguages(lang, speaker.lang)) {
-                        int propotion1 = langPropotionList.get(lang);
-                        langPropotionList.put(lang, propotion1-1);
-
-                        int propotion2 = langPropotionList.get(speaker.lang);
-                        langPropotionList.put(speaker.lang, propotion2+1);
-                        pc = speaker.pc;
-                        lang = speaker.lang;
+        for(Iterator it = people.iterator(); it.hasNext();) {
+            Person speaker = (Person)it.next();
+            if(bumped(speaker) && lang != speaker.lang) {
+                if(!compareRanksOfLanguages(lang, speaker.lang)) {
+                    try {
+                        semaphore.acquire();
+                        updatePropotionList(speaker.lang);
+                        semaphore.release();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
-                    Date date = new Date();
-                    bumpTime = date.getTime();
+
+                    pc = speaker.pc;
+                    lang = speaker.lang;
                 }
+                Date date = new Date();
+                bumpTime = date.getTime();
             }
         }
     }
 
+    void updatePropotionList(String anotherLang) {
+        int propotion1 = langPropotionList.get(lang);
+        langPropotionList.put(lang, propotion1-1);
+
+        int propotion2 = langPropotionList.get(anotherLang);
+        langPropotionList.put(anotherLang, propotion2+1);
+    }
+
     Boolean bumped(Person speaker) {
-            float distance = dist(ex, ey, speaker.ex, speaker.ey);
-            if(ex == speaker.ex && ey == speaker.ey) {
-                return false;
-            } else if(distance < 10) {
-                return true;
-            }
+        float distance = dist(ex, ey, speaker.ex, speaker.ey);
+        if(ex == speaker.ex && ey == speaker.ey) {
             return false;
+        } else if(distance < 5) {
+            return true;
+        }
+        return false;
     }
 
     int compareTo(Person p)

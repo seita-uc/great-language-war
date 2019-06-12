@@ -79,6 +79,19 @@ void pieChart(float diameter) {
           .floatValue();
           noStroke();
       arc(width/2, height/2, diameter, diameter, lastAngle, lastAngle+radians(angle));
+
+      pushMatrix();
+      translate(width/2, height/2);
+      float rad = lastAngle + radians(angle);
+      rotate(rad);
+      fill(0);
+      if(angle > 10) {
+          textSize(angle/4);
+          textAlign(LEFT);
+          text(language, 0, 0);
+      }
+      popMatrix();
+
       lastAngle += radians(angle);
   }
 }

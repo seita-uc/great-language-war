@@ -1,16 +1,18 @@
 import processing.core.*;
+import java.util.concurrent.Semaphore;
 import java.util.*; 
 import java.math.*;
 Person person;
-int maxPeople = 200;
+int maxPeople = 500;
 int totalLangSpeakers, totalSpeakersPropotion;
 Person[] peopleSortList;
 ArrayList<Person> people = new ArrayList<Person>();
-int personSize = 150;
+int personSize = 80;
 long startTime;
+Semaphore semaphore = new Semaphore(1);
 
 void setup() {
-    size(800, 800, FX2D);
+    size(1500, 1000, FX2D);
     imageMode(CENTER);
 
     for(Map.Entry<String, Integer> entry : langPopulationList.entrySet()) {
@@ -58,14 +60,5 @@ void draw() {
     }
 }
 
-
 void keyPressed(){
-    /*for(int i = 0; i < enemies.length; i++) {*/
-        /*int randNum = int(random(i, enemies.length));*/
-        /*if(!enemies[randNum].isShot) {*/
-            /*Person enemy = enemies[randNum];*/
-            /*person.fire(enemy);*/
-            /*break;*/
-        /*}*/
-    /*}*/
 } 
