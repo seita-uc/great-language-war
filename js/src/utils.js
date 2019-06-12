@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import { Person } from "./person.js";
 BigNumber.set({ DECIMAL_PLACES: 10, ROUNDING_MODE: 4 });
 
 /*https://www.vistawide.com/languages/top_30_languages.htm*/
@@ -18,12 +19,12 @@ export const langPopulationList = {
 
 export function pieChart(p5, diameter) {
   let lastAngle = 0;
-  for(const lang in langPropotionList) {
-      p5.fill(langColorList.get(lang));
-      const propotion = langPropotionList[lang];
+  for(const lang in p5.langPropotionList) {
+      p5.fill(p5.langColorList.get(lang));
+      const propotion = p5.langPropotionList[lang];
       const fullDeg = new BigNumber(360);
       const bgProp = new BigNumber(propotion);
-      const bgTotal = new BigNumber(totalSpeakersPropotion);
+      const bgTotal = new BigNumber(p5.totalSpeakersPropotion);
       const angle = fullDeg
           .multipliedBy(bgProp)
           .dividedBy(bgTotal);
@@ -44,38 +45,30 @@ export function pieChart(p5, diameter) {
   }
 }
 
-export function compareRanksOfLanguages(p5, lang1, lang2) {
-    let sortable = [];
-    for(let lang in langPropotionList) {
-        sortable.push([ lang, langPropotionList[lang] ]);
-    }
-
-    sortable.sort(function(a, b) {
-        return b[1] - a[1];
-    });
-
-    let rank1 = 0;
-    let rank2 = 0;
-    for(let i = 0; i < sortable.length; i++) {
-        const language = sortable[i][0];
-        if(language == lang1) {
-            rank1 = sortable[i][1];
-        } else if(language == lang2) {
-            rank2 = sortable[i][1];
-        }
-    }
-    return rank1 > rank2;
+export function craeateCanvasOfParentSize(p5, parent) {
+    const canvas = p5.createCanvas(parent.clientWidth, parent.clientHeight);
+    canvas.parent(parent);
+    canvas.position(0, 0);
+    return canvas;
 }
 
 export function initialize(p5) {
     p5.totalSpeakersPropotion = 0;
+    p5.totalLangSpeakers = 0;
     p5.startTime = 0;
-    p5.maxPeople = 500;
+    p5.maxPeople = 10;
     p5.peopleSortList = new Array();
     p5.people = new Array();
     p5.personSize = 80;
     p5.langPropotionList = new Object();
     p5.langColorList = new Object();
+
+    p5.stand = p5.loadImage("assets/human_1.png");
+    p5.stand.resize(p5.personSize, p5.personSize);
+    p5.walk = p5.loadImage("assets/human_2.png");
+    p5.walk.resize(p5.personSize, p5.personSize);
+    p5.speak = p5.loadImage("assets/human_3.png");
+    p5.speak.resize(p5.personSize, p5.personSize);
 
     for(const lang in langPopulationList) {
         p5.totalLangSpeakers += langPopulationList[lang];
@@ -86,9 +79,10 @@ export function initialize(p5) {
         const speakers = new BigNumber(langPopulationList[lang]);
         const total = new BigNumber(p5.totalLangSpeakers);
         const maxNum = new BigNumber(p5.maxPeople);
-        const propotion = new BigNumber()
+        const propotion = speakers
             .dividedBy(total)
             .multipliedBy(maxNum)
+            .toNumber();
         p5.langPropotionList[lang] = propotion;
         p5.totalSpeakersPropotion += propotion;
 
@@ -102,7 +96,6 @@ export function initialize(p5) {
             p5.people.push(langSpeaker);
         }
     }
-    const d = new Date();
-    this.startTime = d.now();
+    p5.startTime = Date.now();
 }
 

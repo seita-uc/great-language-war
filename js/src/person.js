@@ -6,30 +6,10 @@ export class Person {
         this.pc = p5.color(255, 255, 255);
         this.lang = language;
 
-        //TODO object assignで値渡しする
-        this.stand = p5.loadImage("assets/human_1.png");
-        this.stand.resize(personSize, personSize);
-        this.walk = p5.loadImage("assets/human_2.png");
-        this.walk.resize(personSize, personSize);
-        this.speak = p5.loadImage("assets/human_3.png");
-        this.speak.resize(personSize, personSize);
-        this.currentState = stand;
-
-        //this.stand;
-        //this.walk;
-        //this.speak;
-        //this.currentState;
-        //this.px;
-        //this.py;
-        //this.ex;
-        //this.ey;
-        //this.exspeed;
-        //this.eyspeed;
-        //this.strand;
-        //this.pc;
-        //this.bumpTime;
-        //this.standTime;
-        //this.lang;
+        this.stand = Object.assign({}, p5.stand); 
+        this.walk = Object.assign({}, p5.walk);
+        this.speak = Object.assign({}, p5.speak);
+        this.currentState = this.stand;
 
         if(!isPlayer) {
             this.initialize();
@@ -40,8 +20,8 @@ export class Person {
         const p5 = this.p5;
         this.exspeed = p5.random(0.5, 4);
         this.eyspeed = p5.random(0.5, 4);
-        this.ex = p5.random(0, width);
-        this.ey = p5.random(0, height);
+        this.ex = p5.random(0, p5.windowWidth);
+        this.ey = p5.random(0, p5.windowHeight);
         if(p5.random(100) > 50) {
             this.exspeed = -this.exspeed;
         }
@@ -49,15 +29,14 @@ export class Person {
             this.eyspeed = -this.eyspeed;
         }
         this.strand = p5.random(200, 400);
-        this.pc = langColorList.get(lang);
+        this.pc = p5.langColorList[this.lang];
     }
 
     show() {
         const p5 = this.p5;
         this.currentState = this.stand;
-        const d = new Date();
-        this.currentTime = d.now();
-        if (p5.keyPressed || (currentTime - this.bumpTime) < 500) {
+        const currentTime = Date.now();
+        if (p5.keyIsPressed || (currentTime - this.bumpTime) < 500) {
             this.currentState = this.speak;
         } else if(this.px != p5.mouseX || this.py != p5.mouseY) {
             if((this.currentTime/300%2) == 0) {
@@ -65,19 +44,25 @@ export class Person {
             }
         }
         p5.tint(this.pc);
-        p5.image(this.currentState, this.mouseX, this.mouseY);
-        this.px = this.mouseX;
-        this.py = this.mouseY;
-        this.ex = this.mouseX;
-        this.ey = this.mouseY;
+        p5.image(this.currentState,
+            p5.mouseX,
+            p5.mouseY,
+            p5.personSize,
+            p5.personSize,
+        );
+        this.px = p5.mouseX;
+        this.py = p5.mouseY;
+        this.ex = p5.mouseX;
+        this.ey = p5.mouseY;
 
         if((currentTime - p5.startTime) < 2000) {
             return;
         }
 
-        for(const speaker in people) {
+        for(let i = 0; i < p5.people.length; i++) {
+            const speaker = p5.people[i];
             if(this.bumped(speaker) && this.lang !== speaker.lang) {
-                if(!compareRanksOfLanguages(this.lang, speaker.lang)) {
+                if(!this.compareRanksOfLanguages(this.lang, speaker.lang)) {
                     //const propotion1 = p5.langPropotionList[this.lang];
                     //p5.langPropotionList[lang] = propotion1-1;
 
@@ -88,26 +73,24 @@ export class Person {
                     this.updatePropotionList(speaker.lang);
                 } else {
                     const propotion1 = p5.langPropotionList[this.lang];
-                    p5.langPropotionList[lang] = propotion1+1;
+                    p5.langPropotionList[this.lang] = propotion1+1;
 
-                    const propotion2 = langPropotionList[speaker.lang];
-                    langPropotionList[speaker.lang] = propotion2-1;
+                    const propotion2 = p5.langPropotionList[speaker.lang];
+                    p5.langPropotionList[speaker.lang] = propotion2-1;
                     speaker.pc = this.pc;
                     speaker.lang = this.lang;
                 }
-                const date = new Date();
-                this.bumpTime = date.now();
+                this.bumpTime = Date.now();
             }
         }
     }
 
     move() {
         const p5 = this.p5;
-        this.currentState = stand;
+        this.currentState = this.stand;
         this.ex -= this.exspeed;
         this.ey -= this.eyspeed;
-        const d = new Date();
-        const currentTime = d.now();
+        const currentTime = Date.now();
         if((currentTime - this.bumpTime) < 800) {
             this.currentState = this.speak;
         } else if((currentTime/this.strand%2) == 0) {
@@ -145,15 +128,15 @@ export class Person {
             return;
         }
 
-        for(const speaker in people) {
+        for(let i = 0; i < p5.people.length; i++) {
+            const speaker = p5.people[i];
             if(this.bumped(speaker) && this.lang != speaker.lang) {
-                if(!compareRanksOfLanguages(lang, speaker.lang)) {
+                if(!this.compareRanksOfLanguages(this.lang, speaker.lang)) {
                     this.updatePropotionList(speaker.lang);
                     this.pc = speaker.pc;
                     this.lang = speaker.lang;
                 }
-                const date = new Date();
-                this.bumpTime = date.now();
+                this.bumpTime = Date.now();
             }
         }
     }
@@ -161,9 +144,9 @@ export class Person {
     updatePropotionList(anotherLang) {
         const p5 = this.p5;
         const propotion1 = p5.langPropotionList[this.lang];
-        p5.langPropotionList[lang] = propotion1-1;
-        const propotion2 = langPropotionList[speaker.lang];
-        langPropotionList[speaker.lang] = propotion2+1;
+        p5.langPropotionList[this.lang] = propotion1-1;
+        const propotion2 = p5.langPropotionList[anotherLang];
+        p5.langPropotionList[anotherLang] = propotion2+1;
     }
 
     bumped(speaker) {
@@ -181,5 +164,29 @@ export class Person {
         }
         return false;
     }
+
+    compareRanksOfLanguages(lang1, lang2) {
+        const p5 = this.p5;
+        let sortable = [];
+        for(let lang in p5.langPropotionList) {
+            sortable.push([ lang, p5.langPropotionList[lang] ]);
+        }
+        sortable.sort(function(a, b) {
+            return b[1] - a[1];
+        });
+
+        let rank1 = 0;
+        let rank2 = 0;
+        for(let i = 0; i < sortable.length; i++) {
+            const language = sortable[i][0];
+            if(language == lang1) {
+                rank1 = sortable[i][1];
+            } else if(language == lang2) {
+                rank2 = sortable[i][1];
+            }
+        }
+        return rank1 > rank2;
+    }
+
 }
 
