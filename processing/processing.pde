@@ -1,46 +1,32 @@
 import gifAnimation.*;
-
 Player player;
-PShape earth;
-GifMaker gifExport;
-float a;
+Gif earthBackground;
+PImage block;
+int blockWidth, blockHeight;
 void setup() {
-    size(800, 800, P3D);
-    gifExport = new GifMaker(this, "images/export1.gif");
-    gifExport.setRepeat(0);
+    size(800, 800, FX2D);
     player = new Player();
-    earth = loadShape("globe/Globe.obj");
-    earth.scale(45);
+    earthBackground = new Gif(this, "images/earth.gif");
+    earthBackground.play();
+
+    block = loadImage("images/block.png");
+    blockWidth = 100;
+    blockHeight = 100;
+    block.resize(blockWidth, blockHeight);
 }
-
+           
 void draw() {
-    background(0);
-    a++;
-    lights();
-
-    pushMatrix();
-    translate(width/2, height/2, 0);
-    rotateY(radians(-90));
-    rotateX(radians(-90));
-    rotateY(radians(-a));
-    shape(earth);
-
-    /*stroke(255, 0, 0);*/
-    /*line(-4000, 0, 0, 4000, 0, 0);*/
-    /*stroke(0, 255, 0);*/
-    /*line(0, -4000, 0, 0, 4000, 0);*/
-    /*stroke(0, 0, 255);*/
-    /*line(0, 0, -4000, 0, 0, 4000);*/
-    popMatrix();
-
-    /*player.fight();*/
-    gifExport.addFrame();
-    if(a == 360) {
-        gifExport.finish();
-    }
+    setUpField();
 }
 
 void mousePressed() {
+}
+
+void setUpField() {
+    image(earthBackground, 0, 0);
+    for(int i = 0; i < width/blockWidth; i++) {
+        image(block, i*blockWidth, height-blockHeight);
+    }
 }
 
 class Player {
@@ -64,6 +50,6 @@ class Player {
     }
 
     /*public void fire(Alien alien) {*/
-        /*alien.getShot();*/
+    /*alien.getShot();*/
     /*}*/
 }
