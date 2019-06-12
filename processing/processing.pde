@@ -1,45 +1,58 @@
-import gifAnimation.*;
+import java.util.*; 
 Player player;
-Gif earthBackground;
-PImage block;
-int blockWidth, blockHeight;
+int playerSize = 150;
 void setup() {
     size(800, 800, FX2D);
     player = new Player();
-    earthBackground = new Gif(this, "images/earth.gif");
-    earthBackground.play();
-
-    block = loadImage("images/block.png");
-    blockWidth = 100;
-    blockHeight = 100;
-    block.resize(blockWidth, blockHeight);
+    imageMode(CENTER);
 }
            
 void draw() {
     background(255);
-    setUpField();
-    Player player = new Player();
     player.show();
 }
 
+void mouseMoved() {
+}
 void mousePressed() {
+    player.currentState = player.speak;
 }
 
-void setUpField() {
-    image(earthBackground, 0, 0);
-    for(int i = 0; i < width/blockWidth; i++) {
-        image(block, i*blockWidth, height-blockHeight);
-    }
-}
+/*void setUpField() {*/
+    /*image(earthBackground, 0, 0);*/
+    /*for(int i = 0; i < width/blockWidth; i++) {*/
+        /*image(block, i*blockWidth, height-blockHeight);*/
+    /*}*/
+/*}*/
 
 class Player {
-    PImage player;
+    public PImage stand, walk, speak, currentState;
+    public float px, py;
     public Player() {
-        player = loadImage("assets/Sprites/cyberpunk-detective/PNG/sprites/walk/Layer-2.png");
-        player.resize(50, 0);
+        stand = loadImage("assets/human_1.png");
+        stand.resize(playerSize, playerSize);
+        walk = loadImage("assets/human_2.png");
+        walk.resize(playerSize, playerSize);
+        speak = loadImage("assets/human_3.png");
+        speak.resize(playerSize, playerSize);
+        currentState = stand;
+        px = mouseX;
+        py = mouseY;
     }
 
     public void show() {
-        image(player, mouseX, height-blockHeight-500);
+        currentState = stand;
+        if (mousePressed) {
+            currentState = speak;
+        } else if(px != mouseX || py != mouseY) {
+            Date d = new Date();
+            if((d.getTime()/300 % 2) == 0) {
+                currentState = walk;
+            }
+        }
+        /*tint(0, 153, 204);*/
+        image(currentState, mouseX, mouseY);
+        px = mouseX;
+        py = mouseY;
     }
 }
