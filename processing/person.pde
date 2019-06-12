@@ -3,11 +3,15 @@ class Person implements Comparable<Person> {
     public float px, py, ex, ey, exspeed, eyspeed;
     public int strand;
     public color pc;
-    public long shotTime;
+    public long bumpTime;
     public Boolean isShot;
     public String lang;
 
     public Person(Boolean isPlayer, String language) {
+        px = mouseX;
+        py = mouseY;
+        pc = color(255, 255, 255);
+        lang = language;
         stand = loadImage("assets/human_1.png");
         stand.resize(personSize, personSize);
         walk = loadImage("assets/human_2.png");
@@ -15,10 +19,6 @@ class Person implements Comparable<Person> {
         speak = loadImage("assets/human_3.png");
         speak.resize(personSize, personSize);
         currentState = stand;
-        px = mouseX;
-        py = mouseY;
-        pc = color(255, 255, 255);
-        lang = language;
 
         if(!isPlayer) {
             initialize();
@@ -37,11 +37,12 @@ class Person implements Comparable<Person> {
 
     public void show() {
         currentState = stand;
-        if (keyPressed) {
+        Date d = new Date();
+        long currentTime = d.getTime();
+        if (keyPressed || (currentTime - bumpTime) < 500) {
             currentState = speak;
         } else if(px != mouseX || py != mouseY) {
-            Date d = new Date();
-            if((d.getTime()/300%2) == 0) {
+            if((currentTime/300%2) == 0) {
                 currentState = walk;
             }
         }
@@ -49,19 +50,55 @@ class Person implements Comparable<Person> {
         image(currentState, mouseX, mouseY);
         px = mouseX;
         py = mouseY;
+        ex = mouseX;
+        ey = mouseY;
+
+        if((currentTime - startTime) < 2000) {
+            return;
+        }
+
+        for(Iterator it = people.iterator(); it.hasNext();) {
+            Person speaker = (Person)it.next();
+            if(bumped(speaker) && lang != speaker.lang) {
+                if(!compareRanksOfLanguages(lang, speaker.lang)) {
+                    int propotion1 = langPropotionList.get(lang);
+                    langPropotionList.put(lang, propotion1-1);
+
+                    int propotion2 = langPropotionList.get(speaker.lang);
+                    langPropotionList.put(speaker.lang, propotion2+1);
+                    pc = speaker.pc;
+                    lang = speaker.lang;
+                } else {
+                    int propotion1 = langPropotionList.get(lang);
+                    langPropotionList.put(lang, propotion1+1);
+
+                    int propotion2 = langPropotionList.get(speaker.lang);
+                    langPropotionList.put(speaker.lang, propotion2-1);
+                    speaker.pc = pc;
+                    speaker.lang = lang;
+                }
+                Date date = new Date();
+                bumpTime = date.getTime();
+            }
+        }
     }
 
     public void move() {
         if(isShot) {
-            explode();
+            /*explode();*/
         } else {
             ex -= exspeed;
             ey -= eyspeed;
             currentState = stand;
             Date d = new Date();
-            if((d.getTime()/strand%2) == 0) {
+            long currentTime = d.getTime();
+            if((currentTime - bumpTime) < 800) {
+                currentState = speak;
+            } else if((currentTime/strand%2) == 0) {
                 currentState = walk;
             }
+
+            noTint();
             tint(pc);
             image(currentState, ex, ey, personSize, personSize);
             if(ex < -personSize) {
@@ -70,55 +107,38 @@ class Person implements Comparable<Person> {
             if(ey < -personSize) {
                 ey = height+personSize;
             }
+
+            if((currentTime - startTime) < 1000) {
+                return;
+            }
+
             for(Iterator it = people.iterator(); it.hasNext();) {
                 Person speaker = (Person)it.next();
-                float distance = dist(ex, ey, speaker.ex, speaker.ey);
-                if(ex == speaker.ex && ey == speaker.ey) {
-                    return;
-                }
-                if(distance < 5) {
+                if(bumped(speaker) && lang != speaker.lang) {
                     if(!compareRanksOfLanguages(lang, speaker.lang)) {
+                        int propotion1 = langPropotionList.get(lang);
+                        langPropotionList.put(lang, propotion1-1);
+
+                        int propotion2 = langPropotionList.get(speaker.lang);
+                        langPropotionList.put(speaker.lang, propotion2+1);
                         pc = speaker.pc;
+                        lang = speaker.lang;
                     }
+                    Date date = new Date();
+                    bumpTime = date.getTime();
                 }
             }
         }
     }
 
-    public void fire(Person enemy) {
-        enemy.getShot();
-    }
-
-    public void explode() {
-        Date d = new Date();
-        long timePassed = d.getTime() - shotTime;
-
-        if(timePassed > 1000) {
-            initialize();
-        }
-
-        if(timePassed > 0 && timePassed < 500) {
-            float weight = 500/timePassed;
-            strokeWeight(weight);
-            stroke(255,255,0);
-            line(mouseX, mouseY, ex, ey);
-            noStroke();
-            showParticle(mouseX, mouseY, ex, ey, int(100*timePassed/500));
-        }
-
-        noStroke();
-        fill(178, 34, 34);
-        float explosionSize = timePassed/30+70;
-        ellipse(ex, ey, explosionSize, explosionSize);
-        fill(255, 140, 0);
-        float explosionCoreSize = timePassed/30;
-        ellipse(ex, ey, explosionCoreSize, explosionCoreSize);
-    }
-
-    public void getShot() {
-        Date d = new Date();
-        isShot = true;
-        shotTime = d.getTime();
+    Boolean bumped(Person speaker) {
+            float distance = dist(ex, ey, speaker.ex, speaker.ey);
+            if(ex == speaker.ex && ey == speaker.ey) {
+                return false;
+            } else if(distance < 10) {
+                return true;
+            }
+            return false;
     }
 
     int compareTo(Person p)

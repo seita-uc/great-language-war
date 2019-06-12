@@ -7,14 +7,16 @@ int totalLangSpeakers, totalSpeakersPropotion;
 Person[] peopleSortList;
 ArrayList<Person> people = new ArrayList<Person>();
 int personSize = 150;
+long startTime;
 
 void setup() {
     size(800, 800, FX2D);
     imageMode(CENTER);
+
     for(Map.Entry<String, Integer> entry : langPopulationList.entrySet()) {
         totalLangSpeakers += entry.getValue();
     }
-    person = new Person(true, "English");
+    person = new Person(true, "Japanese");
 
     for(Map.Entry<String, Integer> entry : langPopulationList.entrySet()) {
         String language = entry.getKey();
@@ -38,22 +40,24 @@ void setup() {
             people.add(langSpeaker);
         }
     }
-
-    for(Map.Entry<String, Integer> entry : langPropotionList.entrySet()) {
-        println(entry.getKey(), ": ", entry.getValue());
-    }
-    println(totalSpeakersPropotion);
+    Date d = new Date();
+    startTime = d.getTime();
 }
-           
+
 void draw() {
     background(255);
+    pieChart(height-50);
     Collections.sort(people);
     for(Iterator it = people.iterator(); it.hasNext();) {
         Person speaker = (Person)it.next();
         speaker.move();
     }
     person.show();
+    for(Map.Entry<String, Integer> entry : langPropotionList.entrySet()) {
+        println(entry.getKey(), ": ", entry.getValue());
+    }
 }
+
 
 void keyPressed(){
     /*for(int i = 0; i < enemies.length; i++) {*/

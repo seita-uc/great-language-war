@@ -21,7 +21,7 @@ Map<String, Integer> langPopulationList = new HashMap<String, Integer>() {
         put("Japanese", 127);
         put("Spanish", 420);
         put("Arabic", 230);
-        put("Chinese", 1051);
+        /*put("Chinese", 1051);*/
         put("Hindi", 490);
         put("Portuguese", 213);
         put("Bengali", 215);
@@ -42,7 +42,7 @@ Boolean compareRanksOfLanguages(String lang1, String lang2) {
         String language = entry.getKey();
         if(language == lang1) {
             rank1 = entry.getValue();
-        } else if(language == lang1) {
+        } else if(language == lang2) {
             rank2 = entry.getValue();
         }
     }
@@ -62,6 +62,25 @@ implements Comparator<Map.Entry<String, Integer>>{
         }
         return 0;
     }
+}
+
+void pieChart(float diameter) {
+  float lastAngle = 0;
+  for(Map.Entry<String, Integer> entry : langPropotionList.entrySet()) {
+      String language = entry.getKey();
+      fill(langColorList.get(language));
+      int propotion = entry.getValue();
+      BigDecimal fullDeg = new BigDecimal(360);
+      BigDecimal bgProp = new BigDecimal(propotion);
+      BigDecimal bgTotal = new BigDecimal(totalSpeakersPropotion);
+      float angle = fullDeg
+          .multiply(bgProp, MathContext.DECIMAL64)
+          .divide(bgTotal, MathContext.DECIMAL64)
+          .floatValue();
+          noStroke();
+      arc(width/2, height/2, diameter, diameter, lastAngle, lastAngle+radians(angle));
+      lastAngle += radians(angle);
+  }
 }
 
 
