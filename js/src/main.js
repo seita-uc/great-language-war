@@ -1,31 +1,110 @@
-function init() {
-    // Stageの作成
-    var stage = new createjs.Stage("myCanvas");
-    // コンテナー(グループの親)を作成
-    var container = new createjs.Container();
-    container.x = 300;
-    container.y = 300;
-    stage.addChild(container); // 画面に追加
-    // ループ分で10回
-    for (var i = 0; i < 10; i++) {
-        // 円を作成し
-        var ball = new createjs.Shape();
-        ball.graphics
-            .beginFill("DarkRed")
-            .drawCircle(0, 0, 50);
-        // 円周上に配置
-        ball.x = 200 * Math.sin(i * 360 / 10 * Math.PI / 180);
-        ball.y = 200 * Math.cos(i * 360 / 10 * Math.PI / 180);
-        // グループに追加
-        container.addChild(ball);
+import 'babel-polyfill'
+
+let canvasWidth;
+let canvasHeight;
+let canvas;
+let masaterus = new Array();
+const sketch = function(p5) {
+    p5.setup = async function() {
+
+        const body = document.body;
+        canvas = craeateCanvasOfParentSize(p5, body);
+        canvasWidth = body.clientWidth;
+        canvasHeight = body.clientHeight;
+
+        const imgPath = "../../processing/images/block.png";
+        for(let i = 0; i < 5; i++) {
+            const x = p5.random(0, canvasWidth);
+            const y = p5.random(0, canvasHeight);
+            const xspeed = p5.random(-15, 15);
+            const yspeed = p5.random(-15, 15);
+            const masateru = new Person(p5, imgPath, x, y, xspeed, yspeed);
+            masaterus.push(masateru);
+        }
     }
-    createjs.Ticker.addEventListener("tick", handleTick);
-    function handleTick() {
-        // 親だけを回転
-        container.rotation += 1;
-        stage.update();
+
+    p5.draw = async function() {
+        p5.clear();
+        p5.imageMode(p5.CENTER);
+        for(let i = 0; i < masaterus.length; i++) {
+            masaterus[i].walk();
+        }
+    }
+
+    p5.windowResized = function() {
+        const body = document.body;
+        canvasWidth = body.clientWidth;
+        canvasHeight = body.clientHeight;
+        p5.resizeCanvas(canvasWidth, canvasHeight);
+    }
+
+    p5.mousePressed = function() {
+        for(let i = 0; i < masaterus.length; i++) {
+            let size;
+            const iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            if(iOS) {
+                size = p5.random(10, 100);
+            } else {
+                size = p5.random(100, 300);
+            }
+            masaterus[i].changeSize(size);
+        }
+    }
+
+    p5.mouseWheel = function(event) {
     }
 }
 
-window.addEventListener("load", init);
+class Person {
+    constructor(p5, imgPath, x, y, xspeed, yspeed) {
+        this.p5 = p5;
+        this.img = p5.loadImage(imgPath);
+        this.px = x;
+        this.py = y;
+        this.pxspeed = xspeed;
+        this.pyspeed = yspeed;
+        this.isOn = true;
+        const iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        if(iOS) {
+            this.psize = p5.random(10, 100);
+        } else {
+            this.psize = p5.random(100, 300);
+        }
+    }
 
+    walk() {
+        const p5 = this.p5;
+        if(this.isOn) {
+            p5.image(this.img, this.px, this.py, this.psize, this.psize);
+        }
+
+        this.px = this.px + this.pxspeed;
+        this.py = this.py + this.pyspeed;
+
+        if(this.px > canvasWidth) {
+            this.pxspeed = -this.pxspeed;
+        } else if (this.px < 0) {
+            this.pxspeed = -this.pxspeed;
+        }
+
+        if(this.py > canvasHeight) {
+            this.pyspeed = -this.pyspeed;
+        } else if (this.py < 0) {
+            this.pyspeed = -this.pyspeed;
+        }
+    }
+
+    changeSize(size) {
+        this.psize = size;
+    }
+}
+
+function craeateCanvasOfParentSize(p5, parent) {
+    canvas = p5.createCanvas(parent.clientWidth, parent.clientHeight);
+    canvas.parent(parent);
+    canvas.position(0, 0);
+    canvas.style('z-index', '100');
+    return canvas;
+}
+
+new p5(sketch);

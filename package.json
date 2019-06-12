@@ -10,22 +10,28 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+ssh://git@github.com/seita-uc/great-language-war.git"
+        "url": "git+https://github.com/seita-uc/seita-blog.git"
     },
     "author": "",
     "license": "ISC",
     "bugs": {
-        "url": "https://github.com/seita-uc/great-language-war/issues"
+        "url": "https://github.com/seita-uc/seita-blog/issues"
     },
-    "homepage": "https://github.com/seita-uc/great-language-war#readme",
+    "homepage": "https://github.com/seita-uc/seita-blog#readme",
     "browserify": {
-        "transform": [["babelify", { "presets": ["@babel/preset-env"] }]]
-    },  
+        "transform": [
+            "babelify"
+        ]
+    },
     "devDependencies": {
         "@babel/core": "^7.3.4",
         "@babel/preset-env": "^7.3.4",
         "babel-preset-env": "^1.7.0",
         "babelify": "^10.0.0",
         "babel-polyfill": "^6.26.0"
+    },
+    "dependencies": {
+        "domready": "^1.0.8",
+        "p5": "^0.8.0"
     }
 }
