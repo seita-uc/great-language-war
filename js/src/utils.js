@@ -25,11 +25,13 @@ export function pieChart(p5, diameter) {
       const fullDeg = new BigNumber(360);
       const bgProp = new BigNumber(propotion);
       const bgTotal = new BigNumber(p5.totalSpeakersPropotion);
-      const angle = fullDeg
+      let angle = fullDeg
           .multipliedBy(bgProp)
           .dividedBy(bgTotal)
           .toNumber();
-      console.log(lang, angle);
+      if(angle < 0) {
+          angle = 0;
+      }
       p5.noStroke();
       p5.arc(
           p5.windowWidth/2,
@@ -42,13 +44,13 @@ export function pieChart(p5, diameter) {
 
       p5.push();
       p5.translate(p5.windowWidth/2, p5.windowHeight/2);
-      const rad = lastAngle + p5.radians(angle);
+      const rad = lastAngle + p5.radians(angle)/2;
       p5.rotate(rad);
-      p5.fill(0);
+      p5.fill(0, 175);
       if(angle > 10) {
-          p5.textSize(angle/4);
-          p5.textAlign(p5.LEFT);
-          p5.text(lang, 0, 0);
+          p5.textSize(40);
+          p5.textAlign(p5.LEFT, p5.CENTER);
+          p5.text(lang, diameter/6, 0);
       }
       p5.pop();
 
@@ -67,7 +69,8 @@ export function initialize(p5) {
     p5.totalSpeakersPropotion = 0;
     p5.totalLangSpeakers = 0;
     p5.startTime = 0;
-    p5.maxPeople = 10;
+    //TODO 100以下に人数を設定するとバグる
+    p5.maxPeople = 100;
     p5.peopleSortList = new Array();
     p5.people = new Array();
     p5.personSize = 100;
@@ -90,10 +93,6 @@ export function initialize(p5) {
         const speakers = new BigNumber(langPopulationList[lang]);
         const total = new BigNumber(p5.totalLangSpeakers);
         const maxNum = new BigNumber(p5.maxPeople);
-        //const propotion = speakers
-            //.dividedBy(total)
-            //.multipliedBy(new BigNumber(100))
-            //.toNumber();
         const speakersNum = speakers
             .dividedBy(total)
             .multipliedBy(maxNum)
@@ -106,9 +105,11 @@ export function initialize(p5) {
             langColor = p5.color(255, 255, 255);
         }
         p5.langColorList[lang] = langColor;
-        for(let i = 0; i < speakersNum; i++) {
-            const langSpeaker = new Person(p5, false, lang);
-            p5.people.push(langSpeaker);
+        if(speakersNum > 1) {
+            for(let i = 0; i < speakersNum; i++) {
+                const langSpeaker = new Person(p5, false, lang);
+                p5.people.push(langSpeaker);
+            }
         }
     }
     p5.startTime = Date.now();
