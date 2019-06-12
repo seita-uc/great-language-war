@@ -103,6 +103,6 @@ export function initialize(p5) {
         }
     }
     const d = new Date();
-    startTime = d.now();
+    this.startTime = d.now();
 }
 

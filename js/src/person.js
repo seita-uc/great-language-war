@@ -1,4 +1,4 @@
-class Person {
+export class Person {
     constructor(p5, isPlayer, language) {
         this.p5 = p5;
         this.px = p5.mouseX;
@@ -56,7 +56,7 @@ class Person {
         const p5 = this.p5;
         this.currentState = this.stand;
         const d = new Date();
-        this.currentTime = d.getTime();
+        this.currentTime = d.now();
         if (p5.keyPressed || (currentTime - this.bumpTime) < 500) {
             this.currentState = this.speak;
         } else if(this.px != p5.mouseX || this.py != p5.mouseY) {
@@ -71,117 +71,115 @@ class Person {
         this.ex = this.mouseX;
         this.ey = this.mouseY;
 
-        if((currentTime - this.startTime) < 2000) {
+        if((currentTime - p5.startTime) < 2000) {
             return;
         }
 
-        for(Iterator it = people.iterator(); it.hasNext();) {
-            Person speaker = (Person)it.next();
-            if(bumped(speaker) && lang != speaker.lang) {
-                if(!compareRanksOfLanguages(lang, speaker.lang)) {
-                    int propotion1 = langPropotionList.get(lang);
-                    langPropotionList.put(lang, propotion1-1);
+        for(const speaker in people) {
+            if(this.bumped(speaker) && this.lang !== speaker.lang) {
+                if(!compareRanksOfLanguages(this.lang, speaker.lang)) {
+                    //const propotion1 = p5.langPropotionList[this.lang];
+                    //p5.langPropotionList[lang] = propotion1-1;
 
-                    int propotion2 = langPropotionList.get(speaker.lang);
-                    langPropotionList.put(speaker.lang, propotion2+1);
-                    pc = speaker.pc;
-                    lang = speaker.lang;
+                    //const propotion2 = langPropotionList[speaker.lang];
+                    //langPropotionList[speaker.lang] = propotion2+1;
+                    //this.pc = speaker.pc;
+                    //this.lang = speaker.lang;
+                    this.updatePropotionList(speaker.lang);
                 } else {
-                    int propotion1 = langPropotionList.get(lang);
-                    langPropotionList.put(lang, propotion1+1);
+                    const propotion1 = p5.langPropotionList[this.lang];
+                    p5.langPropotionList[lang] = propotion1+1;
 
-                    int propotion2 = langPropotionList.get(speaker.lang);
-                    langPropotionList.put(speaker.lang, propotion2-1);
-                    speaker.pc = pc;
-                    speaker.lang = lang;
+                    const propotion2 = langPropotionList[speaker.lang];
+                    langPropotionList[speaker.lang] = propotion2-1;
+                    speaker.pc = this.pc;
+                    speaker.lang = this.lang;
                 }
-                Date date = new Date();
-                bumpTime = date.getTime();
+                const date = new Date();
+                this.bumpTime = date.now();
             }
         }
     }
 
-    public void move() {
-        currentState = stand;
-        ex -= exspeed;
-        ey -= eyspeed;
-        Date d = new Date();
-        long currentTime = d.getTime();
-        if((currentTime - bumpTime) < 800) {
-            currentState = speak;
-        } else if((currentTime/strand%2) == 0) {
-            currentState = walk;
-        } else if (random(100) > 99) {
-            standTime = currentTime;
+    move() {
+        const p5 = this.p5;
+        this.currentState = stand;
+        this.ex -= this.exspeed;
+        this.ey -= this.eyspeed;
+        const d = new Date();
+        const currentTime = d.now();
+        if((currentTime - this.bumpTime) < 800) {
+            this.currentState = this.speak;
+        } else if((currentTime/this.strand%2) == 0) {
+            this.currentState = this.walk;
+        } else if (p5.random(100) > 99) {
+            this.standTime = currentTime;
         }
             
-        if ((currentTime - standTime) < 500) {
-            ex += exspeed;
-            ey += eyspeed;
+        if ((currentTime - this.standTime) < 500) {
+            this.ex += this.exspeed;
+            this.ey += this.eyspeed;
         }
 
-        noTint();
-        tint(pc);
-        image(currentState, ex, ey, personSize, personSize);
-        if(ex < -personSize) {
-            ex = width+personSize;
-        } else if(ex > width) {
-            ex = -personSize;
+        p5.tint(this.pc);
+        p5.image(
+            this.currentState,
+            this.ex,
+            this.ey,
+            p5.personSize,
+            p5.personSize
+        );
+
+        if(this.ex < -p5.personSize) {
+            this.ex = p5.windowWidth + p5.personSize;
+        } else if(this.ex > p5.windowWidth) {
+            this.ex = -p5.personSize;
         }
-        if(ey < -personSize) {
-            ey = height+personSize;
-        } else if(ey > height) {
-            ey = -personSize;
+        if(this.ey < -p5.personSize) {
+            this.ey = p5.windowHeight + p5.personSize;
+        } else if(this.ey > p5.windowHeight) {
+            this.ey = -p5.personSize;
         }
 
-        if((currentTime - startTime) < 3000) {
+        if((currentTime - p5.startTime) < 3000) {
             return;
         }
 
-        for(Iterator it = people.iterator(); it.hasNext();) {
-            Person speaker = (Person)it.next();
-            if(bumped(speaker) && lang != speaker.lang) {
+        for(const speaker in people) {
+            if(this.bumped(speaker) && this.lang != speaker.lang) {
                 if(!compareRanksOfLanguages(lang, speaker.lang)) {
-                    try {
-                        semaphore.acquire();
-                        updatePropotionList(speaker.lang);
-                        semaphore.release();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-
-                    pc = speaker.pc;
-                    lang = speaker.lang;
+                    this.updatePropotionList(speaker.lang);
+                    this.pc = speaker.pc;
+                    this.lang = speaker.lang;
                 }
-                Date date = new Date();
-                bumpTime = date.getTime();
+                const date = new Date();
+                this.bumpTime = date.now();
             }
         }
     }
 
-    void updatePropotionList(String anotherLang) {
-        int propotion1 = langPropotionList.get(lang);
-        langPropotionList.put(lang, propotion1-1);
-
-        int propotion2 = langPropotionList.get(anotherLang);
-        langPropotionList.put(anotherLang, propotion2+1);
+    updatePropotionList(anotherLang) {
+        const p5 = this.p5;
+        const propotion1 = p5.langPropotionList[this.lang];
+        p5.langPropotionList[lang] = propotion1-1;
+        const propotion2 = langPropotionList[speaker.lang];
+        langPropotionList[speaker.lang] = propotion2+1;
     }
 
-    Boolean bumped(Person speaker) {
-        float distance = dist(ex, ey, speaker.ex, speaker.ey);
-        if(ex == speaker.ex && ey == speaker.ey) {
+    bumped(speaker) {
+        const p5 = this.p5;
+        const distance = p5.dist(
+            this.ex,
+            this.ey,
+            speaker.ex,
+            speaker.ey
+        );
+        if(this.ex == speaker.ex && this.ey == speaker.ey) {
             return false;
         } else if(distance < 5) {
             return true;
         }
         return false;
-    }
-
-    int compareTo(Person p)
-    {
-        if(p.ey < this.ey) return 1;
-        else if(p.ey > this.ey) return -1;
-        else return 0;
     }
 }
 
