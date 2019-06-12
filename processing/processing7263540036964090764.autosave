@@ -4,19 +4,18 @@ Gif earthBackground;
 PImage block;
 int blockWidth, blockHeight;
 void setup() {
-    size(800, 800, FX2D);
+    size(800, 800);
     player = new Player();
     earthBackground = new Gif(this, "images/earth.gif");
     earthBackground.play();
 
-    block = loadImage("images/block.png");
+    block = loadIm5age("images/block.png");
     blockWidth = 100;
     blockHeight = 100;
     block.resize(blockWidth, blockHeight);
 }
            
 void draw() {
-    background(255);
     setUpField();
     Player player = new Player();
     player.show();
@@ -35,11 +34,15 @@ void setUpField() {
 class Player {
     PImage player;
     public Player() {
-        player = loadImage("assets/Sprites/cyberpunk-detective/PNG/sprites/walk/Layer-2.png");
-        player.resize(50, 0);
+        player = loadImage("assets/Sprites/cyberpunk-detective/PNG/sprites/walk/Layer-1.png");
+        player.resize(200, 0);
     }
 
     public void show() {
-        image(player, mouseX, height-blockHeight-500);
+        image(player, mouseX, height-blockHeight);
     }
+
+    /*public void fire(Alien alien) {*/
+    /*alien.getShot();*/
+    /*}*/
 }
