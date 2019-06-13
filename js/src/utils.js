@@ -75,7 +75,7 @@ export function initialize(p5) {
     p5.startTime = 0;
     p5.playerLang = "Japanese";
     //TODO 100以下に人数を設定するとバグる
-    p5.maxPeople = 300;
+    p5.maxPeople = 400;
     p5.peopleSortList = new Array();
     p5.people = new Array();
     p5.personSize = 100;

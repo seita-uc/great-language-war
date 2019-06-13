@@ -159,7 +159,7 @@ export class Person {
         );
         if(this.ex == speaker.ex && this.ey == speaker.ey) {
             return false;
-        } else if(distance < 5) {
+        } else if(distance < 10) {
             return true;
         }
         return false;
