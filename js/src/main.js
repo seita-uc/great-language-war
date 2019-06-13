@@ -10,7 +10,6 @@ let canvasHeight;
 let canvas;
 const sketch = function(p5) {
     p5.setup = async function() {
-        //p5.frameRate(30);
         const body = document.body;
         canvas = craeateCanvasOfParentSize(p5, body);
         canvasWidth = body.clientWidth;

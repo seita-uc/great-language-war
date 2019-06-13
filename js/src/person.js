@@ -103,7 +103,6 @@ export class Person {
             p5.personSize,
             p5.personSize
         );
-        //p5.noTint();
 
         if(this.ex < -p5.personSize) {
             this.ex = p5.windowWidth + p5.personSize;

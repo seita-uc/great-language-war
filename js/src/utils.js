@@ -97,13 +97,6 @@ export function initialize(p5) {
         Bengali: p5.color(253, 95, 20),
     };
 
-    //p5.stand = p5.loadImage("assets/human_1.svg");
-    //p5.stand.resize(p5.personSize, p5.personSize);
-    //p5.walk = p5.loadImage("assets/human_2.svg");
-    //p5.walk.resize(p5.personSize, p5.personSize);
-    //p5.speak = p5.loadImage("assets/human_3.svg");
-    //p5.speak.resize(p5.personSize, p5.personSize);
-
     for(const lang in langPopulationList) {
         p5.totalLangSpeakers += langPopulationList[lang];
     }
