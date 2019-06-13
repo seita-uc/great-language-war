@@ -84,6 +84,18 @@ export function initialize(p5) {
     p5.stand = new Object(); 
     p5.walk = new Object();
     p5.speak = new Object();
+    p5.langColorList = {
+        English: p5.color(253, 20, 228),
+        German: p5.color(20, 253, 52),
+        Russian: p5.color(253, 20, 135),
+        Japanese: p5.color(20, 253, 145),
+        Spanish: p5.color(148, 253, 20),
+        Arabic: p5.color(125, 20, 253),
+        Chinese: p5.color(253, 20, 20),
+        Hindi: p5.color(20, 38, 253),
+        Portuguese: p5.color(20, 135, 253),
+        Bengali: p5.color(253, 95, 20),
+    };
 
     //p5.stand = p5.loadImage("assets/human_1.svg");
     //p5.stand.resize(p5.personSize, p5.personSize);
@@ -106,19 +118,6 @@ export function initialize(p5) {
             .toNumber();
         p5.langPropotionList[lang] = speakersNum;
         p5.totalSpeakersPropotion += speakersNum;
-
-        p5.langColorList = {
-            English: p5.color(253, 20, 228),
-            German: p5.color(20, 253, 52),
-            Russian: p5.color(253, 20, 135),
-            Japanese: p5.color(20, 253, 145),
-            Spanish: p5.color(148, 253, 20),
-            Arabic: p5.color(125, 20, 253),
-            Chinese: p5.color(253, 20, 20),
-            Hindi: p5.color(20, 38, 253),
-            Portuguese: p5.color(20, 135, 253),
-            Bengali: p5.color(253, 95, 20),
-        };
 
         //TODO pixelを上書き
         //stand.loadPixels();
