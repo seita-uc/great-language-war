@@ -12,7 +12,7 @@ long startTime;
 Semaphore semaphore = new Semaphore(1);
 
 void setup() {
-    size(1500, 1000, FX2D);
+    size(800, 800, FX2D);
     imageMode(CENTER);
 
     for(Map.Entry<String, Integer> entry : langPopulationList.entrySet()) {

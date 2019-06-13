@@ -107,12 +107,12 @@ export class Person {
 
         if(this.ex < -p5.personSize) {
             this.ex = p5.windowWidth + p5.personSize;
-        } else if(this.ex > p5.windowWidth) {
+        } else if(this.ex > p5.windowWidth + p5.personSize) {
             this.ex = -p5.personSize;
         }
         if(this.ey < -p5.personSize) {
             this.ey = p5.windowHeight + p5.personSize;
-        } else if(this.ey > p5.windowHeight) {
+        } else if(this.ey > p5.windowHeight + p5.personSize) {
             this.ey = -p5.personSize;
         }
 

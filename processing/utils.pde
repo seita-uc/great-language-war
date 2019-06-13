@@ -21,7 +21,7 @@ Map<String, Integer> langPopulationList = new HashMap<String, Integer>() {
         put("Japanese", 127);
         put("Spanish", 420);
         put("Arabic", 230);
-        /*put("Chinese", 1051);*/
+        put("Chinese", 1051);
         put("Hindi", 490);
         put("Portuguese", 213);
         put("Bengali", 215);
