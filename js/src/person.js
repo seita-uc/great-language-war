@@ -3,12 +3,11 @@ export class Person {
         this.p5 = p5;
         this.px = p5.mouseX;
         this.py = p5.mouseY;
-        this.pc = p5.color(255, 255, 255);
         this.lang = language;
 
-        this.stand = Object.assign({}, p5.stand); 
-        this.walk = Object.assign({}, p5.walk);
-        this.speak = Object.assign({}, p5.speak);
+        this.stand = Object.assign({}, p5.stand[language]); 
+        this.walk = Object.assign({}, p5.walk[language]);
+        this.speak = Object.assign({}, p5.speak[language]);
         this.currentState = this.stand;
 
         if(!isPlayer) {
@@ -29,7 +28,6 @@ export class Person {
             this.eyspeed = -this.eyspeed;
         }
         this.strand = p5.random(200, 400);
-        this.pc = p5.langColorList[this.lang];
     }
 
     show() {
@@ -43,7 +41,6 @@ export class Person {
                 this.currentState = this.walk;
             }
         }
-        //p5.tint(this.pc);
         p5.image(this.currentState,
             p5.mouseX,
             p5.mouseY,
@@ -64,7 +61,7 @@ export class Person {
             if(this.bumped(speaker) && this.lang !== speaker.lang) {
                 if(!this.compareRanksOfLanguages(this.lang, speaker.lang)) {
                     this.updatePropotionList(speaker.lang);
-                    this.pc = speaker.pc;
+                    this.updateImages(speaker.lang);
                     this.lang = speaker.lang;
                 } else {
                     const propotion1 = p5.langPropotionList[this.lang];
@@ -72,7 +69,7 @@ export class Person {
 
                     const propotion2 = p5.langPropotionList[speaker.lang];
                     p5.langPropotionList[speaker.lang] = propotion2-1;
-                    speaker.pc = this.pc;
+                    speaker.updateImages(this.lang);
                     speaker.lang = this.lang;
                 }
                 this.bumpTime = Date.now();
@@ -99,8 +96,6 @@ export class Person {
             this.ey += this.eyspeed;
         }
 
-        //p5.tint(this.pc);
-        //p5.ellipse(this.ex, this.ey, p5.personSize, p5.personSize);
         p5.image(
             this.currentState,
             this.ex,
@@ -108,6 +103,7 @@ export class Person {
             p5.personSize,
             p5.personSize
         );
+        //p5.noTint();
 
         if(this.ex < -p5.personSize) {
             this.ex = p5.windowWidth + p5.personSize;
@@ -129,7 +125,7 @@ export class Person {
             if(this.bumped(speaker) && this.lang != speaker.lang) {
                 if(!this.compareRanksOfLanguages(this.lang, speaker.lang)) {
                     this.updatePropotionList(speaker.lang);
-                    this.pc = speaker.pc;
+                    this.updateImages(speaker.lang);
                     this.lang = speaker.lang;
                 }
                 this.bumpTime = Date.now();
@@ -143,6 +139,14 @@ export class Person {
         p5.langPropotionList[this.lang] = propotion1-1;
         const propotion2 = p5.langPropotionList[anotherLang];
         p5.langPropotionList[anotherLang] = propotion2+1;
+    }
+
+    updateImages(anotherLang) {
+        const p5 = this.p5;
+        this.stand = Object.assign({}, p5.stand[anotherLang]);
+        this.walk = Object.assign({}, p5.walk[anotherLang]);
+        this.speak = Object.assign({}, p5.speak[anotherLang]);
+        this.currentState = this.stand;
     }
 
     bumped(speaker) {
