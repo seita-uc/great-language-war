@@ -1,5 +1,5 @@
-import BigNumber from "bignumber.js";
 import { Person } from "./person.js";
+import BigNumber from "bignumber.js";
 BigNumber.set({ DECIMAL_PLACES: 10, ROUNDING_MODE: 4 });
 
 /*https://www.vistawide.com/languages/top_30_languages.htm*/
@@ -48,9 +48,13 @@ export function pieChart(p5, diameter) {
       p5.rotate(rad);
       p5.fill(0, 175);
       if(angle > 10) {
+          p5.push();
+          p5.translate(diameter/3.5, 0);
+          p5.rotate(p5.PI);
           p5.textSize(40);
-          p5.textAlign(p5.LEFT, p5.CENTER);
-          p5.text(lang, diameter/6, 0);
+          p5.textAlign(p5.CENTER, p5.CENTER);
+          p5.text(lang, 0, 0);
+          p5.pop();
       }
       p5.pop();
 
@@ -70,7 +74,7 @@ export function initialize(p5) {
     p5.totalLangSpeakers = 0;
     p5.startTime = 0;
     //TODO 100以下に人数を設定するとバグる
-    p5.maxPeople = 100;
+    p5.maxPeople = 300;
     p5.peopleSortList = new Array();
     p5.people = new Array();
     p5.personSize = 100;
@@ -83,6 +87,13 @@ export function initialize(p5) {
     p5.walk.resize(p5.personSize, p5.personSize);
     p5.speak = p5.loadImage("assets/human_3.png");
     p5.speak.resize(p5.personSize, p5.personSize);
+
+    //p5.stand = p5.loadImage("assets/human_1.svg");
+    //p5.stand.resize(p5.personSize, p5.personSize);
+    //p5.walk = p5.loadImage("assets/human_2.svg");
+    //p5.walk.resize(p5.personSize, p5.personSize);
+    //p5.speak = p5.loadImage("assets/human_3.svg");
+    //p5.speak.resize(p5.personSize, p5.personSize);
 
     for(const lang in langPopulationList) {
         p5.totalLangSpeakers += langPopulationList[lang];

@@ -43,7 +43,7 @@ export class Person {
                 this.currentState = this.walk;
             }
         }
-        p5.tint(this.pc);
+        //p5.tint(this.pc);
         p5.image(this.currentState,
             p5.mouseX,
             p5.mouseY,
@@ -99,7 +99,8 @@ export class Person {
             this.ey += this.eyspeed;
         }
 
-        p5.tint(this.pc);
+        //p5.tint(this.pc);
+        //p5.ellipse(this.ex, this.ey, p5.personSize, p5.personSize);
         p5.image(
             this.currentState,
             this.ex,

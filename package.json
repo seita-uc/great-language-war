@@ -33,6 +33,7 @@
     "dependencies": {
         "bignumber.js": "^9.0.0",
         "domready": "^1.0.8",
-        "p5": "^0.8.0"
+        "p5": "^0.8.0",
+        "p5.js-svg": "^0.5.2"
     }
 }
