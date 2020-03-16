@@ -1299,9 +1299,9 @@ loose-envify@^1.0.0:
     js-tokens "^3.0.0 || ^4.0.0"
 
 minimist@^1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/minimist/-/minimist-1.2.0.tgz#a35008b20f41383eec1fb914f4cd5df79a264284"
-  integrity sha1-o1AIsg9BOD7sH7kU9M1d95omQoQ=
+  version "1.2.5"
+  resolved "https://registry.yarnpkg.com/minimist/-/minimist-1.2.5.tgz#67d66014b66a6a8aaa0c083c5fd58df4e4e97602"
+  integrity sha512-FM9nNUYrRBAELZQT3xeZQ7fmMOBg6nWNmJKTcgsJeaLstP/UODVpGsr5OhXhhXg6f+qtJ8uiZ+PUxkDWcgIXLw==
 
 ms@2.0.0:
   version "2.0.0"
@@ -1319,6 +1319,13 @@ node-releases@^1.1.17:
   integrity sha512-/SCjetyta1m7YXLgtACZGDYJdCSIBAWorDWkGCGZlydP2Ll7J48l7j/JxNYZ+xsgSPbWfdulVS/aY+GdjUsQ7Q==
   dependencies:
     semver "^5.3.0"
+
+p5.js-svg@^0.5.2:
+  version "0.5.2"
+  resolved "https://registry.yarnpkg.com/p5.js-svg/-/p5.js-svg-0.5.2.tgz#4a281f414b2f00b6e4890736a48af8c6bf1a44f1"
+  integrity sha1-SigfQUsvALbkiQc2pIr4xr8aRPE=
+  dependencies:
+    svgcanvas latest
 
 p5@^0.8.0:
   version "0.8.0"
@@ -1468,6 +1475,11 @@ supports-color@^5.3.0:
   integrity sha512-QjVjwdXIt408MIiAqCX4oUKsgU2EqAGzs2Ppkm4aQYbjm+ZEWEcW4SfFNTr4uMNZma0ey4f5lgLrkB0aX0QMow==
   dependencies:
     has-flag "^3.0.0"
+
+svgcanvas@latest:
+  version "0.10.0"
+  resolved "https://registry.yarnpkg.com/svgcanvas/-/svgcanvas-0.10.0.tgz#fc38034382271e4b2845b5d5b9086ddfb4c149dc"
+  integrity sha1-/DgDQ4InHksoRbXVuQht37TBSdw=
 
 to-fast-properties@^1.0.3:
   version "1.0.3"
